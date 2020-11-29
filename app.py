@@ -1,7 +1,7 @@
 import pandas as pd
 from flask import Flask, redirect, url_for, render_template, request
 
-METADATA = pd.read_csv('C:/Users/User/Documents/python_project/flask/IMDBdata_MainData2.csv', low_memory=False)
+METADATA = pd.read_csv('IMDBdata_MainData2.csv', low_memory=False)
 
 app = Flask(__name__)
 
