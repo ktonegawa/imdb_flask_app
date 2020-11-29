@@ -6,32 +6,27 @@ METADATA = pd.read_csv('C:/Users/User/Documents/python_project/flask/IMDBdata_Ma
 app = Flask(__name__)
 
 def imdb_rating_recommendation(n):
-    metadata_sorted = METADATA.sort_values('imdbRating', ascending=False)
-    return metadata_sorted[['Title', 'imdbRating']].head(n)                                               
-
-def ratings_value_recommendation(n):
-    metadata_sorted = METADATA.sort_values('Ratings.Value', ascending=False)
-    return metadata_sorted[['Title', 'Ratings.Value']].head(n) 
+    metadata_cleaned = METADATA.dropna(subset = ['imdbRating'])
+    metadata_sorted = metadata_cleaned.sort_values('imdbRating', ascending=False)
+    return metadata_sorted[['Title', 'imdbRating']].head(n)                                                
 
 def metascore_rating_recommendation(n):
-    metadata_sorted = METADATA.sort_values('Metascore', ascending=False)
-    return metadata_sorted[['Title', 'Metascore']].head(n)  
+    metadata_cleaned = METADATA.dropna(subset = ['Metascore'])
+    metadata_sorted = metadata_cleaned.sort_values('Metascore', ascending=False)
+    return metadata_sorted[['Title', 'Metascore']].head(n)
 
 def averaged_ratings_recommendation(n):
-    METADATA['averagedRating'] = (
-        (METADATA['Metascore']  / 10.0) + 
-        METADATA['imdbRating'] +
-        METADATA['Ratings.Value'].str.split('/').str[0].astype(float)) / 3.0
-        #the values in Ratings.Value were strings in the format of n/10 so 
-        #I split up the forward slash and only left the first value and 
-        #convered the series to float values
-    metadata_sorted = METADATA.sort_values('averagedRating', ascending=False)
+    metadata_cleaned = METADATA.dropna(subset = ['imdbRating', 'Metascore'])
+    metadata_cleaned['averagedRating'] = (
+        (metadata_cleaned['Metascore']  / 10.0) + 
+        metadata_cleaned['imdbRating']) / 2.0
+    metadata_sorted = metadata_cleaned.sort_values('averagedRating', ascending=False)
     return metadata_sorted[['Title', 'averagedRating']].head(n)
 
 def filter_by_type(input_type):
     #example input: series, movie
     metadata_cleaned = METADATA.dropna(subset = ['Type'])
-    return METADATA[METADATA['Type'] == input_type]
+    return metadata_cleaned[METADATA['Type'] == input_type]
 
 def filter_by_genre(input_genre):
     input_genre = input_genre.lower()
